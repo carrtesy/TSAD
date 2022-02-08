@@ -18,3 +18,9 @@ class SWaTDataset(Dataset):
 
     def __getitem__(self, idx):
         return self.x[idx:idx+self.window_size], self.y[idx:idx+self.window_size]
+
+datasets = {}
+datasets["SWaT"] = SWaTDataset
+
+def get_dataset(x, y, window_size = 3, dataset_type = "SWaT"):
+    return datasets[dataset_type](x, y, window_size)

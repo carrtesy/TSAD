@@ -1,17 +1,6 @@
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
-import matplotlib.pyplot as plt
-
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
-import seaborn as sns
-
-from commons.utils import EarlyStopping
-import os
-from tqdm import tqdm as tqdm_plain
-from tqdm.notebook import tqdm_notebook
-from tqdm.gui import tqdm_gui
 
 from exp_helpers.exp import Trainer, Tester
 
@@ -38,15 +27,9 @@ class OmniAnomaly_Tester(Tester):
 
         self.train_loss_list = self.get_loss_list(self.train_iterator, loss_fn)
         self.test_loss_list = self.get_loss_list(self.test_iterator, loss_fn)
-        self.mean = np.mean(self.train_loss_list, axis=0)
-        self.std = np.cov(self.train_loss_list.T)
 
     def get_anomaly_score(self):
-        anomaly_scores = []
-        for item in self.test_loss_list:
-            x = (item - self.mean)
-            score = np.matmul(np.matmul(x, self.std), x.T)
-            anomaly_scores.append(score)
+        anomaly_scores = np.mean(self.test_loss_list, axis = 1)
 
         print(f"=== Anomaly statistics ===\n"
               f"Total: {len(anomaly_scores)}\n"

@@ -2,13 +2,13 @@ import pandas as pd
 import numpy as np
 import os
 
-from load_data_submodule import load_SWaT
+from data.load_data_submodule import load_SWaT
 
 functions = {}
 functions["SWaT"] = load_SWaT
 
-def load_data(dataset_type = "SWaT"):
-    return functions[dataset_type]()
+def load_data(dataset_type = "SWaT", home_dir = "."):
+    return functions[dataset_type](home_dir)
 
 def load_anomaly_intervals(anomaly_labels, window_size):
     window_y = []

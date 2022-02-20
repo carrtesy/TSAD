@@ -24,8 +24,6 @@ class OmniAnomaly_Tester(Tester):
     def __init__(self, args, model, train_loader, test_loader):
         super(OmniAnomaly_Tester, self).__init__(args, model, train_loader, test_loader)
         loss_fn = F.mse_loss
-
-        self.train_loss_list = self.get_loss_list(self.train_iterator, loss_fn)
         self.test_loss_list = self.get_loss_list(self.test_iterator, loss_fn)
 
     def get_anomaly_score(self):

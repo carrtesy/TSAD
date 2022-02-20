@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-from tqdm.notebook import tqdm
 
 class EarlyStopping:
     def __init__(self, patience=7, verbose=False, delta=0, path='checkpoints.pt'):

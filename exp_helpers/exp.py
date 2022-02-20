@@ -31,34 +31,34 @@ class Trainer:
                 "gui" : tqdm_gui,
             }
             self.tqdm = tqdms[args.tqdmopt]
-            self.train_iterator = self.tqdm(enumerate(self.train_loader),
-                                            total=len(self.train_loader),
-                                            desc="training",
-                                            leave=True)
-            self.epochs = self.tqdm(range(self.args.epochs), leave=True)
-        else:
-            self.train_iterator = enumerate(self.train_loader)
-            self.epochs = range(self.args.epochs)
 
         self.early_stopping = EarlyStopping(patience=3, path=self.args.model_path)
 
     def train(self):
         self.model.train()
 
-        for epoch in self.epochs:
-            train_loss = 0.0
+        epochs = range(self.args.epochs) if not self.args.use_tqdm \
+            else self.tqdm(range(self.args.epochs), leave=True)
 
-            for i, batch_data in self.train_iterator:
+        for epoch in epochs:
+            train_loss = 0.0
+            train_iterator = enumerate(self.train_loader) if not self.args.use_tqdm\
+                else self.tqdm(enumerate(self.train_loader),
+                            total=len(self.train_loader),
+                            desc="training",
+                            leave=True)
+
+            for i, batch_data in train_iterator:
                 loss = self._process_batch(batch_data)
                 train_loss += loss.item()
 
                 if self.args.use_tqdm:
-                    self.train_iterator.set_postfix({"train_loss": float(loss),})
+                    train_iterator.set_postfix({"train_loss": float(loss),})
 
             train_loss = train_loss / len(self.train_loader)
 
             if self.args.use_tqdm:
-                self.epochs.set_postfix({"Train Loss": train_loss,})
+                epochs.set_postfix({"Train Loss": train_loss,})
             else:
                 print(f"EPOCH {epoch} | {train_loss}")
 

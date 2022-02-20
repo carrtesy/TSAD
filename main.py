@@ -11,6 +11,10 @@ from exp_helpers.exp_LSTMAE import LSTMAE_Trainer, LSTMAE_Tester
 from exp_helpers.exp_OmniAnomaly import OmniAnomaly_Trainer, OmniAnomaly_Tester
 from exp_helpers.exp_USAD import USAD_Trainer, USAD_Tester
 
+from exp_helpers.utils import SEED_everything
+
+SEED_everything(42)
+
 # 1. Argparse
 config = ""
 
@@ -50,11 +54,17 @@ LSTMAE_parser.add_argument("--latent_dim", type=int, required=True, default=128,
 LSTMAE_parser.add_argument("--num_layers", type=int, required=True, default=1, help=f"Num of hidden layer")
 
 ### Omnianomaly
-Omnianomaly_parser = subparser.add_parser("OmniAnomaly")
-Omnianomaly_parser.add_argument("--latent_dim", type=int, required=True, default=128, help=f"LSTM hidden dim")
-Omnianomaly_parser.add_argument("--num_layers", type=int, required=True, default=1, help=f"Num of hidden layer")
-Omnianomaly_parser.add_argument("--z_dim", type=int, required=True, default=3, help=f"Num of hidden layer")
-Omnianomaly_parser.add_argument("--dense_dim", type=int, required=True, default=10, help=f"Num of hidden layer")
+OmniAnomaly_parser = subparser.add_parser("OmniAnomaly")
+OmniAnomaly_parser.add_argument("--latent_dim", type=int, required=True, default=128, help=f"LSTM hidden dim")
+OmniAnomaly_parser.add_argument("--num_layers", type=int, required=True, default=1, help=f"Num of hidden layer")
+OmniAnomaly_parser.add_argument("--z_dim", type=int, required=True, default=3, help=f"Num of hidden layer")
+OmniAnomaly_parser.add_argument("--dense_dim", type=int, required=True, default=10, help=f"Num of hidden layer")
+
+### USAD
+USAD_parser = subparser.add_parser("USAD")
+USAD_parser.add_argument("--latent_dim", type=int, required=True, default=128, help=f"Encoder, decoder hidden dim")
+USAD_parser.add_argument("--alpha", type=float, required=False, default=0.5, help=f"Encoder, decoder hidden dim")
+USAD_parser.add_argument("--beta", type=float, required=False, default=0.5, help=f"Encoder, decoder hidden dim")
 
 
 ### others
@@ -75,6 +85,9 @@ elif args.model == "OmniAnomaly":
               f"_num_layers_{args.num_layers}" \
               f"_z_dim_{args.z_dim}" \
               f"_dense_dim_{args.dense_dim}"
+elif args.model == "USAD":
+    config += f"_model_{args.model}" \
+              f"_latent_dim_{args.latent_dim}" \
 
 args.config = config
 
@@ -118,9 +131,6 @@ print("done.")
 # 4. train
 print("=" * 30)
 print("Training...")
-
-#args.epochs = 1
-#args.load_pretrained = True
 
 trainers = {
     "LSTMAE": LSTMAE_Trainer,
